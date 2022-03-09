@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "brunos-nodejs-experience": {
+      "hosting": {
+        "brunos-nodejs-experience": [
+          "brunos-nodejs-experience"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "brunos-nodejs-experience"
+  }
+}

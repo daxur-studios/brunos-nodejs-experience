@@ -1,6 +1,6 @@
 # Purpose
 
-This project is Bruno's demonstation of using Node.js and Express to create a basic REST API, (found under functions folder)
+This project is for Bruno's demonstation of using Node.js and Express to create a basic REST API, (found under functions folder)
 
 # BrunosNodejsExperience
 

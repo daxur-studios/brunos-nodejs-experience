@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "f707761f-a98a-4d36-9b23-75dc03e50a43"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -97,6 +100,16 @@
               "src/styles.css"
             ],
             "scripts": []
+          }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "brunos-nodejs-experience:build:production",
+            "firebaseProject": "brunos-nodejs-experience",
+            "firebaseHostingSite": "brunos-nodejs-experience"
           }
         }
       }

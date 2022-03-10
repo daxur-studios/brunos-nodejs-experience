@@ -1,2 +1,8 @@
-#lol
+# lol
 GET http://localhost:5001/brunos-nodejs-experience/europe-west2/api/v1/test
+
+###
+
+# Bruno's Details
+GET http://localhost:5001/brunos-nodejs-experience/europe-west2/api/v1/bruno
+

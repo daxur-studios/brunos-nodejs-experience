@@ -1,0 +1,2 @@
+#lol
+GET http://localhost:5001/brunos-nodejs-experience/europe-west2/api/v1/test

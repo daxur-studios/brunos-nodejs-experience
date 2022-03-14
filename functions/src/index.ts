@@ -1,7 +1,7 @@
 // FIREBASE
 export const isEmulated = process?.env?.FUNCTIONS_EMULATOR === 'true';
 
-import * as admin from 'firebase-admin';
+//import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 
 export const FIREBASE_CONFIG = JSON.parse(
@@ -9,40 +9,49 @@ export const FIREBASE_CONFIG = JSON.parse(
 );
 const region = 'europe-west2'; // London - https://firebase.google.com/docs/functions/locations
 
-admin.initializeApp(functions.config().firebase);
+import { instanceTest } from './controllers/🔥 firebase.manager';
+import { FirestoreRateLimiter } from './middlewares/rateLimiter';
+//import { initApiV1 } from './routes/v1';
+import { initApiV2 } from './routes/v2';
 
-// EXPRESS
-import express = require('express');
-import cors = require('cors');
+export const api = functions
+  .region(region)
+  .https.onRequest(async (req, res) => {
+    // EXPRESS
+    const express = await import('express');
+    const cors = await import('cors');
 
-import { apiFunctionsLimiter } from './middlewares/rateLimiter';
+    const main = express();
 
-const main = express();
+    const expressApiV1 = express();
+    const expressApiV2 = express();
 
-export const expressApiV1 = express();
-export const expressApiV2 = express();
+    main.use(express.json());
+    main.use(
+      cors({
+        /* origin: true */
+      })
+    ); // enabling CORS for all requests
 
-main.use(express.json());
-main.use(
-  cors({
-    /* origin: true */
-  })
-); // enabling CORS for all requests
+    main.use('/v1', expressApiV1);
+    main.use('/v2', expressApiV2);
 
-main.use('/v1', expressApiV1);
-main.use('/v2', expressApiV2);
+    //initApiV1(expressApiV1);
+    initApiV2(expressApiV2);
 
-require('./routes/v1/index');
-require('./routes/v2/index');
-
-export const api = functions.region(region).https.onRequest(main);
+    return main(req, res);
+  });
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
 
 export const test = functions
   .region(region)
-  .https.onRequest((request, response) => {
+  .https.onRequest(async (request, response) => {
+    await instanceTest();
+
+    //  functions.logger.debug(functions.config().firebase);
+
     response.send(
       `${
         process.env.TEST
@@ -55,8 +64,11 @@ export const test = functions
 export const testRateLimiter = functions
   .region(region)
   .https.onRequest(async (req, res) => {
-    const isOverLimit = await apiFunctionsLimiter
-      .rejectOnQuotaExceededOrRecordUsage()
+    const limiter = new FirestoreRateLimiter(15, 3, 'apiFunctionsLimiter');
+    await limiter.init();
+
+    const isOverLimit = await limiter
+      .FirebaseFunctionsRateLimiter!.rejectOnQuotaExceededOrRecordUsage()
       .catch(async (e) => {
         res.status(429).send('Too many requests: ' + JSON.stringify(e));
         return true;
